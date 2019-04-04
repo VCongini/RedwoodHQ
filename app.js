@@ -51,6 +51,17 @@ var express = require('express')
   , syncIDE = require('./routes/syncIDE')
   , testcaseHistory = require('./routes/testcaseHistory');
 
+var Monitor = require('monitor').start();
+var options = {
+    hostName: 'localhost',
+    probeClass: 'Process',
+    initParams: {
+        pollInterval: 1000
+    }
+};
+var processMonitor = new Monitor(options);
+processMonitor.connect();
+
 var realFs = require("fs");
 var gracefulFs = require("graceful-fs");
 gracefulFs.gracefulify(realFs);
@@ -195,6 +206,7 @@ app.put('/actions/:id',auth.auth, actions.actionsPut);
 app.post('/actions',auth.auth, actions.actionsPost);
 app.del('/actions/:id',auth.auth, actions.actionsDelete);
 app.get('/action/:id',auth.auth, actions.getActionDetails);
+app.get('/action/usedin/:id',auth.auth, actions.usedIn);
 
 //actionTags
 app.get('/actiontags',auth.auth, actiontags.actionTagsGet);

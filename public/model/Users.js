@@ -29,6 +29,9 @@ Ext.define('Redwood.model.Users', {
         }, {
             name: 'status',
             type: 'string'
-        }
+        },{
+            name: 'projects',
+            type: 'array'
+         }
     ]
 });

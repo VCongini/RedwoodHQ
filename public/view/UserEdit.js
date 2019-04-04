@@ -85,6 +85,7 @@ Ext.define('Redwood.view.UserEdit', {
                                         var newUser = {};
                                         newUser.name = form.getFieldValues().name;
                                         newUser.tag = form.getFieldValues().tag;
+                                        newUser.projects = form.getFieldValues().projects;
                                         newUser.password = form.getFieldValues().firstpassword;
                                         newUser.username = form.getFieldValues().username;
                                         newUser.email = form.getFieldValues().email;
@@ -208,7 +209,36 @@ Ext.define('Redwood.view.UserEdit', {
                             }
                         }
                     }
+                },
+                {
+                    xtype:"combofieldbox",
+                    afterLabelTextTpl: this.requiredText,
+                    fieldLabel: 'Projects',
+                    displayField:"name",
+                    descField:"name",
+                    height:24,
+                    labelWidth: 100,
+                    forceSelection:false,
+                    createNewOnEnter:false,
+                    encodeSubmitValue:true,
+                    autoSelect: false,
+                    triggerAction: 'all',
+                    store:Ext.data.StoreManager.lookup('Projects'),
+                    valueField:"_id",
+                    queryMode: 'local',
+                    removeOnDblClick:true,
+                    allowBlank: false,
+                    maskRe: /[a-z_0-9_A-Z_-]/,
+                    name:"projects",
+                    listeners: {
+                        specialkey: function(field, e){
+                            if (e.getKey() == e.ENTER) {
+                                this.up('form').down("#submit").handler();
+                            }
+                        }
+                    }
                 }
+
                 ,{
                     xtype:'textfield',
                     vtype: 'passwordTest',

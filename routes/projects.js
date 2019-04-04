@@ -34,12 +34,24 @@ exports.projectsPut = function(req, res){
 
 exports.projectsGet = function(req, res){
     GetProjects(app.getDB(),{},function(data){
+        var userProjects = req.cookies.projects, userRole = req.cookies.role, userId = req.cookies.userId, projectCollection = [];
+        var ObjectID = require('mongodb').ObjectID;
+        if(userRole !== "Admin") {
+            for (var i = 0; i < data.length; i++){
+                if(userProjects.indexOf(data[i]._id.toString()) > -1){
+                    projectCollection.push(data[i]);
+                }
+            }
+
+        } else {
+            projectCollection = data;
+        }
         res.contentType('json');
         res.json({
             success: true,
-            projects: data
+            projects: projectCollection
         });
-    });
+    }, req);
 };
 
 exports.projectsDelete = function(req, res){
@@ -386,14 +398,14 @@ function DeleteProjects(db,data,projectName,callback){
     callback();
 }
 
-function GetProjects(db,query,callback){
+function GetProjects(db,query,callback, req){
     var projects = [];
 
     db.collection('projects', function(err, collection) {
         collection.find(query, {}, function(err, cursor) {
             cursor.each(function(err, project) {
                 if(project == null) {
-                    callback(projects);
+                    callback(projects, req);
                     return;
                 }
                 projects.push(project);
